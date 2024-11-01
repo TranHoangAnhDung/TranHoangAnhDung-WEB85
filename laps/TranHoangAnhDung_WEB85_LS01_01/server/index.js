@@ -1,16 +1,20 @@
 import http from "http";
+import url from "url";
+
 import { customers, products, orders } from "./data.js";
 import * as utils from "./utils.js";
 
 const app = http.createServer((req, res) => {
-  const endpoint = req.url;
+  //Parse url thành nhiều phần
+  const parseURL = url.parse(req.url, true);
+  const path = parseURL.pathname;
+  const query = parseURL.query;
   var id;
-  if (endpoint.startsWith("/customers/")) {
-    id = endpoint.split("/")[2];
-    console.log("id:", id);
+  if (path.startsWith("/customers/")) {
+    id = path.split("/")[2];
   }
 
-  switch (endpoint) {
+  switch (path) {
     case "/customers":
       res.end(JSON.stringify(customers));
       break;
@@ -28,8 +32,12 @@ const app = http.createServer((req, res) => {
       res.end(JSON.stringify(utils.findHighValue(orders)));
       break;
 
-    case `/products?minPrice=5000000&maxPrice=10000000`:
-        res.end(JSON.stringify(res));
+    case "/products":
+      const minPrice = parseInt(query.minPrice);
+      const maxPrice = parseInt(query.maxPrice);
+      res.end(
+        JSON.stringify(utils.rangePriceProduct(minPrice, maxPrice, products))
+      );
       break;
 
     default:

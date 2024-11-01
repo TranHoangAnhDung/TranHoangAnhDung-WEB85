@@ -5,3 +5,6 @@ export const findOrdersById = (id, arr) =>
 
 export const findHighValue = (orders) =>
   orders.filter((order) => order.totalPrice > 10000000);
+
+export const rangePriceProduct = (min, max, arr) =>
+  arr.filter((item) => item.price >= min && item.price <= max);
